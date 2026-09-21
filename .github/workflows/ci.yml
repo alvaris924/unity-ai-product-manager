@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package sanity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: package.json is well-formed
+        run: |
+          jq -e '.name == "com.alvaris.ai-product-manager"' package.json
+          jq -e '.version | test("^[0-9]+[.][0-9]+[.][0-9]+$")' package.json
+          jq -e '.unity | test("^[0-9]+[.][0-9]+$")' package.json
+          jq -e '.dependencies | keys == ["com.unity.ugui"]' package.json
+          echo "version $(jq -r .version package.json), unity $(jq -r .unity package.json)"
+
+      - name: Every asset has a .meta and every .meta has an asset
+        run: |
+          status=0
+          # Unity imports everything except dotfiles and folders ending in ~; each of those needs a .meta next to it.
+          while IFS= read -r path; do
+            case "$path" in
+              ./.*|*/.*|*~|*~/*) continue ;;
+              *.meta) continue ;;
+            esac
+            rel="${path#./}"
+            if [ ! -f "$rel.meta" ]; then
+              echo "::error::missing $rel.meta"
+              status=1
+            fi
+          done < <(find . -mindepth 1 -not -path './.git' -not -path './.git/*' -not -path './.github' -not -path './.github/*' -not -path './.githooks' -not -path './.githooks/*')
+          while IFS= read -r meta; do
+            asset="${meta%.meta}"
+            if [ ! -e "$asset" ]; then
+              echo "::error::orphan $meta"
+              status=1
+            fi
+          done < <(find . -name '*.meta' -not -path './.git/*')
+          exit $status
+
+      - name: Assembly definitions reference nothing outside uGUI
+        run: |
+          for asmdef in Runtime/*.asmdef Editor/*.asmdef; do
+            jq -e '[.references[] | select(startswith("Alvaris.") | not)] | all(. == "UnityEngine.UI")' "$asmdef" \
+              || { echo "::error::$asmdef references an assembly other than UnityEngine.UI"; exit 1; }
+          done

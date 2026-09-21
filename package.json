@@ -1,0 +1,30 @@
+{
+  "name": "com.alvaris.ai-product-manager",
+  "version": "0.1.0",
+  "displayName": "AI Product Manager",
+  "description": "Right-click a UI element in the Game view (Play mode) or Scene view / Hierarchy (Edit mode), say what is wrong, and get a Markdown issue report with a screenshot, hierarchy, component, UnityEvent and pointer diagnostics that Claude Code (or any AI coding agent) can work from.",
+  "unity": "6000.0",
+  "keywords": [
+    "ui",
+    "qa",
+    "bug report",
+    "claude",
+    "ai",
+    "product manager"
+  ],
+  "author": {
+    "name": "Alvaris",
+    "url": "https://github.com/alvaris924"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.ugui": "2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alvaris924/unity-ai-product-manager.git"
+  },
+  "documentationUrl": "https://github.com/alvaris924/unity-ai-product-manager#readme",
+  "changelogUrl": "https://github.com/alvaris924/unity-ai-product-manager/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/alvaris924/unity-ai-product-manager/blob/main/LICENSE"
+}

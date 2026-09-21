@@ -1,0 +1,19 @@
+{
+    "name": "Alvaris.AiProductManager.Editor",
+    "rootNamespace": "Alvaris.AiProductManager.Editor",
+    "references": [
+        "Alvaris.AiProductManager",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

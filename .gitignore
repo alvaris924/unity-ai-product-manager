@@ -1,0 +1,28 @@
+# AI Product Manager is a package-at-root repository: Unity generates nothing here
+# except the .meta files, which are committed.
+
+# IDE and project files
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.pidb
+*.booproj
+*.svd
+
+# Build artifacts that must never ship in the package
+*.unitypackage
+
+# OS
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+
+# Misc
+*.tmp
+*.log

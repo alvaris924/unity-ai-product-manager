@@ -1,0 +1,28 @@
+{
+    "name": "Alvaris.AiProductManager.Editor.Cli",
+    "rootNamespace": "Alvaris.AiProductManager.Editor",
+    "references": [
+        "Alvaris.AiProductManager",
+        "Alvaris.AiProductManager.Editor",
+        "Unity.Pipeline"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "AIPM_UNITY_PIPELINE"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.pipeline",
+            "expression": "0.0.1",
+            "define": "AIPM_UNITY_PIPELINE"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -1,6 +1,6 @@
 ---
 name: pm
-description: Work through UI issue reports filed from the Unity Editor by AI Product Manager (the user right-clicked a UI element and picked "Button doesn't work", "Wrong text", ...). Use when the user pastes an "AI Product Manager report" summary, mentions the PM inbox, or asks to fix, list or watch reported UI issues. Arguments - a report number, "list", or "watch".
+description: Work through UI issue reports filed from the Unity Editor by AI Product Manager (the user right-clicked a UI element and picked "Button doesn't work", "Wrong text", ...), and run scripted playtests in the Editor that tap, drag and push joysticks by name and report back with screenshots and a video. Use when the user pastes an "AI Product Manager report" summary, mentions the PM inbox, asks to fix, list or watch reported UI issues, or asks you to play or check something in the game and show them. Arguments - a report number, "list", "watch", or "playtest <what to check>".
 ---
 
 # AI Product Manager reports
@@ -52,6 +52,33 @@ done
 
 When a line arrives, run the workflow above for that folder, then keep watching until the user says stop.
 While watching, tell the user once that reports filed in Unity will now be picked up automatically.
+
+## Playtests (`/pm playtest <what to check>`)
+
+Play the game in the Editor yourself and report back with screenshots and a video. This needs the Unity CLI
+(`unity command …` from the `com.unity.pipeline` package); check it answers with `unity command editor_status`.
+Gestures go through the uGUI EventSystem, so on-screen UI reacts to them; code that reads a device directly does not.
+
+1. Start: `unity command pm_session --action start --title "<what you check>"`, then `unity command editor_play`.
+   Poll `editor_status` until `playMode` is `playing`, give the game time to load, and take
+   `unity command pm_shot --label "start"` to see where you are (read the PNG it returns).
+2. Look, act, look. `pm_ui` (optionally `--filter`) lists what a finger could press: prefer a target's name or
+   visible text over coordinates, and skip entries with `blocked: true` unless the covering is what you check.
+   Act with `pm_tap --target "…"`, `pm_drag --target "…" --dx … --dy …` or
+   `pm_push --target "<joystick>" --direction up --seconds 3`. Gestures return at once: wait their duration plus half
+   a second before the next command, then `pm_shot --label "…"` and look at the result.
+3. Read the outcomes with `pm_session --action status`. A gesture step ends in `clicked ✔` or `dragged ✔`, or in a ⚠
+   naming the control that took it instead (a popup, a level-up panel, an invisible overlay). ⚠ steps and the console
+   errors listed under a step are findings. Popups often cover the controls: deal with them first.
+4. Record what is worth watching: `pm_record --action start --fps 15 --max_seconds 60` before, `pm_record --action stop`
+   after. Recording also stops when the session ends or Play mode exits.
+5. Write expectations down as you go: `pm_note --text "Expected the shop to open; nothing happened."`
+6. Finish: `pm_session --action end` writes `playtest.md` and `summary.txt`; then `unity command editor_stop`. Answer
+   with what you found, the ⚠ steps and the console errors, and the key screenshots and the video (send the files
+   when your tools can).
+
+The session folder is `{{REPORTS_FOLDER}}/Playtests/NNNN-<title>/`. Coordinates are Game view pixels from the
+top-left, as in the screenshots. Do not recompile or refresh assets while in Play mode.
 
 ## Notes
 

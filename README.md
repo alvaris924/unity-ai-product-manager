@@ -104,6 +104,13 @@ are available from a terminal. Coordinates are Game view pixels from the top-lef
 
 The same operations are a C# API, `Alvaris.AiProductManager.Editor.Playtest`, for Editor tests and scripts.
 
+**Reviewing a playtest** — *Window → AI Product Manager → Playtests* lists the sessions, newest first, with the one
+in progress at the top, updating as steps arrive. A session shows every step with its outcome (✔ in green, ⚠ in
+orange), the console errors logged before it, the screenshots (click to enlarge, double-click to open), and the video
+beside the steps: click a step's time to see that moment in it. *Copy for Claude* puts the summary on the clipboard.
+The video plays in the window while Unity is the active app (it uses the built-in Video module; without it, *Open*
+plays the file in the system player).
+
 ## What the report is good at
 
 The Findings section is written for "the button does nothing" and its relatives. It checks, among other things:
@@ -122,6 +129,8 @@ with no listeners, another graphic sitting on top of the target, and recent exce
   `? runtime` instead of a number.
 - Playtest gestures reach the uGUI EventSystem only: game code that polls an input device directly (keyboard keys,
   `Input.GetTouch`, `Touchscreen.current`) does not see them.
+- In Edit mode Unity runs the player loop, which decodes the Playtests window's video, only while it is the active
+  app: with Unity in the background the video waits, and playback resumes when you come back.
 
 ## Contributing
 

@@ -75,7 +75,8 @@ Gestures go through the uGUI EventSystem, so on-screen UI reacts to them; code t
 5. Write expectations down as you go: `pm_note --text "Expected the shop to open; nothing happened."`
 6. Finish: `pm_session --action end` writes `playtest.md` and `summary.txt`; then `unity command editor_stop`. Answer
    with what you found, the ⚠ steps and the console errors, and the key screenshots and the video (send the files
-   when your tools can).
+   when your tools can). The user can review the whole session in Unity under Window > AI Product Manager >
+   Playtests: steps, screenshots, and the video, which jumps to a step's moment when its time is clicked.
 
 The session folder is `{{REPORTS_FOLDER}}/Playtests/NNNN-<title>/`. Coordinates are Game view pixels from the
 top-left, as in the screenshots. Do not recompile or refresh assets while in Play mode.

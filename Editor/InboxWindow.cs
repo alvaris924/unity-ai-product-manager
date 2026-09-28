@@ -105,6 +105,7 @@ namespace Alvaris.AiProductManager.Editor
                 using (new EditorGUI.DisabledScope(inbox.Count == 0))
                     if (GUILayout.Button("Copy all pending for Claude", EditorStyles.toolbarButton)) CopyAllPending();
                 if (GUILayout.Button("Report selected...", EditorStyles.toolbarButton)) ReportWindow.Open(Selection.activeGameObject);
+                if (GUILayout.Button("Playtests", EditorStyles.toolbarButton)) PlaytestsWindow.Open();
                 if (GUILayout.Button("Folder", EditorStyles.toolbarButton)) ProductManagerMenu.RevealReportsFolder();
                 if (GUILayout.Button("Settings", EditorStyles.toolbarButton)) SettingsService.OpenProjectSettings(AiProductManagerSettingsProvider.Path);
                 if (GUILayout.Button("Refresh", EditorStyles.toolbarButton)) Scan();

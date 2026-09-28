@@ -51,6 +51,19 @@ namespace Alvaris.AiProductManager
             });
         }
 
+        /// <summary>Errors, exceptions and failed asserts logged after <paramref name="from"/>, oldest first, capped at <paramref name="max"/>.</summary>
+        public static List<Entry> ErrorsSince(DateTime from, int max)
+        {
+            var result = new List<Entry>();
+            foreach (var entry in entries)
+            {
+                if (!entry.IsError || entry.Time <= from) continue;
+                result.Add(entry);
+                if (result.Count >= max) break;
+            }
+            return result;
+        }
+
         /// <summary>
         /// Entries from the last <paramref name="seconds"/>: errors and exceptions first, then the rest, newest first
         /// within each group, capped at <paramref name="max"/>.

@@ -1,9 +1,10 @@
 {
-    "name": "Alvaris.AiProductManager.Editor",
+    "name": "Alvaris.AiProductManager.Editor.Cli",
     "rootNamespace": "Alvaris.AiProductManager.Editor",
     "references": [
         "Alvaris.AiProductManager",
-        "UnityEngine.UI"
+        "Alvaris.AiProductManager.Editor",
+        "Unity.Pipeline"
     ],
     "includePlatforms": [
         "Editor"
@@ -12,13 +13,15 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "AIPM_UNITY_PIPELINE"
+    ],
     "versionDefines": [
         {
-            "name": "com.unity.modules.video",
-            "expression": "1.0.0",
-            "define": "AIPM_VIDEO"
+            "name": "com.unity.pipeline",
+            "expression": "0.0.1",
+            "define": "AIPM_UNITY_PIPELINE"
         }
     ],
     "noEngineReferences": false

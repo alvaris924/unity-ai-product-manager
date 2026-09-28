@@ -22,7 +22,7 @@ Reports go to `<project>/AIProductManager/Inbox/NNNN-<category>-<target>/` and m
 
 ## Requirements
 
-Unity 6000.0 or newer with uGUI 2.x (`com.unity.ugui`). No other dependencies: TextMeshPro text is read by reflection, and the popup is runtime IMGUI, so it works with the Input Manager and the Input System package alike.
+Unity 6000.0 or newer with uGUI 2.x (`com.unity.ugui`). No other dependencies: TextMeshPro text is read by reflection, and the popup is runtime IMGUI, so it works with the Input Manager and the Input System package alike. The optional Unity CLI commands for scripted playtests compile only when `com.unity.pipeline` is installed.
 
 ## Install
 
@@ -72,6 +72,45 @@ what goes on the clipboard, console window, popup scale, screenshot on/off.
 
 The report format is plain Markdown, so it works with any agent that can read files and images.
 
+## Scripted playtests
+
+An agent (or an Editor test) can play the game in the Editor and report what it saw: tap and drag controls by
+name, push an on-screen joystick, take screenshots and record a video. Every step, and the console errors logged
+between steps, goes into `<project>/AIProductManager/Playtests/NNNN-<title>/playtest.md` next to the screenshots
+(`NN-<label>.png`) and `video.mp4`. `/pm playtest <what to check>` walks Claude Code through one.
+
+- **Gestures** are synthetic fingers delivered through the uGUI EventSystem, several at once if needed, so buttons,
+  toggles, sliders, scroll views, drag handlers and on-screen joysticks react as they do to a touch, with either input
+  backend. They run on unscaled time, so they also work on screens that pause the game (`Time.timeScale = 0`).
+- **Targets are named, not guessed**: the control list gives every element a finger could press (name, hierarchy
+  path, visible text, position) and flags the ones something else covers. When a gesture ends up on a different
+  control than the one it aimed at, the step says so with ⚠: that is usually the bug.
+- **Screenshots** include Screen Space - Overlay canvases. **Video** is H.264 MP4 through the Editor's built-in
+  `MediaEncoder` (no extra package) and follows the wall clock, so it plays in real time.
+
+With the Unity CLI pipeline package (`com.unity.pipeline`) in the project, these commands
+are available from a terminal. Coordinates are Game view pixels from the top-left corner, as in the screenshots.
+
+| Command | What it does |
+|---|---|
+| `pm_session --action start --title "…"` · `end` · `status` | Opens a playtest folder; `end` writes `playtest.md` and `summary.txt`; `status` shows the last steps and their outcomes |
+| `pm_ui [--filter …]` | Every pressable control on screen, with its text, position and whether it is covered |
+| `pm_tap --target "Play"` or `--x --y` `[--seconds 1]` | Tap (or long-press) a control by name, path or visible text, or a point |
+| `pm_drag --target … --dx 0 --dy -200 --seconds 0.4` | Press, slide and lift: sliders, swipes, scroll views, drag and drop |
+| `pm_push --target "Joystick" --direction up --seconds 3` | Hold an on-screen joystick in one direction; works for fixed and floating sticks |
+| `pm_shot --label "…"` | Screenshot into the session folder |
+| `pm_record --action start [--fps 15 --max_seconds 60]` · `stop` | Record the Game view to MP4 |
+| `pm_note --text "…"` | Write what was expected and what happened into the report |
+
+The same operations are a C# API, `Alvaris.AiProductManager.Editor.Playtest`, for Editor tests and scripts.
+
+**Reviewing a playtest** — *Window → AI Product Manager → Playtests* lists the sessions, newest first, with the one
+in progress at the top, updating as steps arrive. A session shows every step with its outcome (✔ in green, ⚠ in
+orange), the console errors logged before it, the screenshots (click to enlarge, double-click to open), and the video
+beside the steps: click a step's time to see that moment in it. *Copy for Claude* puts the summary on the clipboard.
+The video plays in the window while Unity is the active app (it uses the built-in Video module; without it, *Open*
+plays the file in the system player).
+
 ## What the report is good at
 
 The Findings section is written for "the button does nothing" and its relatives. It checks, among other things:
@@ -88,6 +127,10 @@ with no listeners, another graphic sitting on top of the target, and recent exce
 - TextMeshPro text is read through reflection, so the package does not depend on TMP.
 - Runtime listener counts of UnityEvents come from a private field; if a Unity release renames it the report says
   `? runtime` instead of a number.
+- Playtest gestures reach the uGUI EventSystem only: game code that polls an input device directly (keyboard keys,
+  `Input.GetTouch`, `Touchscreen.current`) does not see them.
+- In Edit mode Unity runs the player loop, which decodes the Playtests window's video, only while it is the active
+  app: with Unity in the background the video waits, and playback resumes when you come back.
 
 ## Contributing
 

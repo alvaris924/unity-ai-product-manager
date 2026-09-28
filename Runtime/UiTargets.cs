@@ -81,12 +81,17 @@ namespace Alvaris.AiProductManager
             element = null;
             matches = new List<Element>();
             if (string.IsNullOrWhiteSpace(query)) return false;
-            query = query.Trim();
+            // Object names often carry stray spaces ("BackButton "); compare paths segment by segment, trimmed.
+            query = TrimSegments(query);
             var all = List();
             var rules = new Func<Element, bool>[]
             {
-                e => string.Equals(e.Path, query, StringComparison.OrdinalIgnoreCase) || (query.Contains("/") && e.Path.EndsWith("/" + query, StringComparison.OrdinalIgnoreCase)),
-                e => string.Equals(e.Name, query, StringComparison.OrdinalIgnoreCase),
+                e =>
+                {
+                    var path = TrimSegments(e.Path);
+                    return string.Equals(path, query, StringComparison.OrdinalIgnoreCase) || (query.Contains("/") && path.EndsWith("/" + query, StringComparison.OrdinalIgnoreCase));
+                },
+                e => string.Equals(e.Name.Trim(), query, StringComparison.OrdinalIgnoreCase),
                 e => string.Equals(e.Text, query, StringComparison.OrdinalIgnoreCase),
                 e => Contains(e.Name, query) || Contains(e.Text, query),
             };
@@ -145,5 +150,12 @@ namespace Alvaris.AiProductManager
 
         static bool Contains(string haystack, string needle) =>
             !string.IsNullOrEmpty(haystack) && haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
+
+        static string TrimSegments(string path)
+        {
+            var parts = path.Trim().Split('/');
+            for (int i = 0; i < parts.Length; i++) parts[i] = parts[i].Trim();
+            return string.Join("/", parts);
+        }
     }
 }
